@@ -23,6 +23,7 @@ func NewRouter(c config.Config, i18n *i18n.I18n) (*Router, error) {
 	e.RedirectTrailingSlash = true
 	e.RedirectFixedPath = true
 
+	// Recovery
 	e.Use(middleware.Recovery(i18n))
 
 	// CORS
