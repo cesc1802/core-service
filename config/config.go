@@ -12,14 +12,14 @@ type Config struct {
 	Env string
 
 	Database struct {
-		Host            string        `yaml:"host"`
-		Port            int           `yaml:"port"`
-		Username        string        `yaml:"username"`
-		Password        string        `yaml:"password"`
-		Dbname          string        `yaml:"dbname"`
-		MaxIdleConns    int           `yaml:"maxIdleConns"`
-		MaxOpenConns    int           `yaml:"maxOpenConns"`
-		ConnMaxLifetime string        `yaml:"connMaxLifetime"`
+		Host            string `yaml:"host"`
+		Port            int    `yaml:"port"`
+		Username        string `yaml:"username"`
+		Password        string `yaml:"password"`
+		Dbname          string `yaml:"dbname"`
+		MaxIdleConns    int    `yaml:"maxIdleConns"`
+		MaxOpenConns    int    `yaml:"maxOpenConns"`
+		ConnMaxLifetime string `yaml:"connMaxLifetime"`
 		//ConnTimeout     time.Duration `yaml:"connTimeout"`
 		//ReadTimeout     time.Duration `yaml:"readTimeout"`
 		//WriteTimeout    time.Duration `yaml:"writeTimeout"`
@@ -50,7 +50,7 @@ type Config struct {
 	//} `yaml:"jwt"`
 
 	Resty struct {
-		Debug   *bool  `yaml:"debug"`
+		Debug   bool   `yaml:"debug"`
 		Timeout string `yaml:"timeout"`
 	} `yaml:"resty"`
 
@@ -74,7 +74,15 @@ type Config struct {
 	//} `yaml:"security"`
 
 	Log struct {
-		Level string `yaml:"level"`
+		Level                 string `yaml:"level"`
+		ConsoleLoggingEnabled bool   `yaml:"consoleLoggingEnabled"`
+		EncodeLogsAsJson      bool   `yaml:"encodeLogsAsJson"`
+		FileLoggingEnabled    bool   `yaml:"fileLoggingEnabled"`
+		Directory             string `yaml:"directory"`
+		Filename              string `yaml:"filename"`
+		MaxSize               int    `yaml:"maxSize"`
+		MaxBackups            int    `yaml:"maxBackups"`
+		MaxAge                int    `yaml:"maxAge"`
 	} `yaml:"log"`
 }
 
