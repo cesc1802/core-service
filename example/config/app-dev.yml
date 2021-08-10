@@ -36,6 +36,7 @@ cors:
   maxAge: 24h
 
 log:
+  level: debug
   consoleLoggingEnabled: true
   encodeLogsAsJson: true
   fileLoggingEnabled: true

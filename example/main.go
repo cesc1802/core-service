@@ -65,8 +65,6 @@ func main() {
 	router, _ := router.NewRouter(configConfig, i18n, logger)
 	router.AddHandle(handlers())
 
-	//database, _ := database.NewDatabase(configConfig)
-
 	appGroup := core_service.NewAppGroup(
 		core_service.AppGroupOption{
 			Name:     "Gin Service",
@@ -74,8 +72,6 @@ func main() {
 		})
 
 	if err := appGroup.Run(); err != nil {
-		logger.Fatal().Msg("stoping execute")
+		panic(err)
 	}
-
-	logger.Info().Msg("server started.")
 }

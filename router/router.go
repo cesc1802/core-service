@@ -2,6 +2,7 @@ package router
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"github.com/cesc1802/core-service/config"
 	"github.com/cesc1802/core-service/i18n"
@@ -11,6 +12,7 @@ import (
 	"github.com/gin-gonic/gin/binding"
 	"github.com/go-playground/validator/v10"
 	"github.com/rs/zerolog"
+	"net"
 	"net/http"
 	"time"
 )
@@ -72,30 +74,29 @@ func (r *Router) Start() error {
 		Addr:    fmt.Sprintf("%s:%s", r.serverCfg.Host, r.serverCfg.Port),
 		Handler: r.Engine,
 	}
+	r.logger.Info().Msgf("Listening and serving HTTP on %v:%v", r.serverCfg.Host, r.serverCfg.Port)
 
-	r.Engine.Run(fmt.Sprintf("%s:%s", r.serverCfg.Host, r.serverCfg.Port))
-
-	if err := r.graceFullServ.ListenAndServe(); err != nil {
-		r.logger.Fatal().Msgf("server cannot start %v", err)
+	lis, err := net.Listen("tcp", fmt.Sprintf("%s:%s", r.serverCfg.Host, r.serverCfg.Port))
+	if err != nil {
+		r.logger.Info().Msgf("Listening error: %v", err)
+		return err
 	}
 
-	//gracefulShutdown(r.graceFullServ)
+	err = r.graceFullServ.Serve(lis)
+
+	if !errors.Is(err, http.ErrServerClosed) {
+		return err
+	}
 
 	return nil
 }
 
 func (r *Router) Stop() error {
-	//c := make(chan bool)
 	ctx, cancelFn := context.WithTimeout(context.Background(), time.Second*10)
 	defer cancelFn()
-	//go func() {
-	//	if r.graceFullServ != nil {
-	//		_ = r.graceFullServ.Shutdown(ctx)
-	//	}
-	//	c <- true
-	//}()
 
 	if r.graceFullServ != nil {
+		r.logger.Info().Msg("shutting down....")
 		_ = r.graceFullServ.Shutdown(ctx)
 	}
 	return nil
