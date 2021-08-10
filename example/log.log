@@ -1,0 +1,32 @@
+{"level":"fatal","time":"2021-08-10T07:34:53Z","message":"server cannot start listen tcp 127.0.0.1:8085: bind: address already in use"}
+{"level":"fatal","time":"2021-08-10T07:34:53Z","message":"server cannot start listen tcp 127.0.0.1:8085: bind: address already in use"}
+{"level":"info","time":"2021-08-10T07:35:55Z","message":"shutting down...."}
+{"level":"info","time":"2021-08-10T07:35:55Z","message":"shutting down...."}
+{"level":"fatal","time":"2021-08-10T07:35:55Z","message":"server cannot start http: Server closed"}
+{"level":"fatal","time":"2021-08-10T07:35:55Z","message":"server cannot start http: Server closed"}
+{"level":"info","time":"2021-08-10T07:36:56Z","message":"shutting down...."}
+{"level":"info","time":"2021-08-10T07:36:56Z","message":"shutting down...."}
+{"level":"fatal","time":"2021-08-10T07:36:56Z","message":"server cannot start http: Server closed"}
+{"level":"fatal","time":"2021-08-10T07:36:56Z","message":"server cannot start http: Server closed"}
+{"level":"info","time":"2021-08-10T07:37:39Z","message":"shutting down...."}
+{"level":"info","time":"2021-08-10T07:37:39Z","message":"shutting down...."}
+{"level":"fatal","time":"2021-08-10T07:37:39Z","message":"server cannot start http: Server closed"}
+{"level":"fatal","time":"2021-08-10T07:37:39Z","message":"server cannot start http: Server closed"}
+{"level":"info","time":"2021-08-10T07:41:29Z","message":"shutting down...."}
+{"level":"info","time":"2021-08-10T07:41:29Z","message":"shutting down...."}
+{"level":"fatal","time":"2021-08-10T07:41:29Z","message":"server cannot start http: Server closed"}
+{"level":"fatal","time":"2021-08-10T07:41:29Z","message":"server cannot start http: Server closed"}
+{"level":"info","time":"2021-08-10T07:52:15Z","message":"Listening and serving HTTP on localhost:8085"}
+{"level":"info","time":"2021-08-10T07:52:15Z","message":"Listening and serving HTTP on localhost:8085"}
+{"level":"info","time":"2021-08-10T07:52:22Z","message":"shutting down...."}
+{"level":"info","time":"2021-08-10T07:52:22Z","message":"shutting down...."}
+{"level":"info","time":"2021-08-10T07:52:47Z","message":"Listening and serving HTTP on localhost:8085"}
+{"level":"info","time":"2021-08-10T07:52:47Z","message":"Listening and serving HTTP on localhost:8085"}
+{"level":"info","time":"2021-08-10T07:52:49Z","message":"shutting down...."}
+{"level":"info","time":"2021-08-10T07:52:49Z","message":"shutting down...."}
+{"level":"info","time":"2021-08-10T07:52:49Z","message":"server started."}
+{"level":"info","time":"2021-08-10T07:52:49Z","message":"server started."}
+{"level":"info","time":"2021-08-10T07:53:28Z","message":"Listening and serving HTTP on localhost:8085"}
+{"level":"info","time":"2021-08-10T07:53:28Z","message":"Listening and serving HTTP on localhost:8085"}
+{"level":"info","time":"2021-08-10T07:53:32Z","message":"shutting down...."}
+{"level":"info","time":"2021-08-10T07:53:32Z","message":"shutting down...."}

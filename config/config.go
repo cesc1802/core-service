@@ -35,10 +35,7 @@ type Config struct {
 		} `mapstructure:"ttls"`
 	} `yaml:"redis"`
 
-	Server struct {
-		Host string `yaml:"host"`
-		Port string `yaml:"port"`
-	} `yaml:"server"`
+	Server `yaml:"server"`
 
 	//Jwt struct {
 	//	Realm              string `yaml:"realm"`
@@ -58,14 +55,7 @@ type Config struct {
 		Langs []string `yaml:"langs"`
 	} `yaml:"i18n"`
 
-	CORS struct {
-		AllowOrigins     []string `yaml:"allowOrigins"`
-		AllowMethods     []string `yaml:"allowMethods"`
-		AllowHeaders     []string `yaml:"allowHeaders"`
-		ExposeHeaders    []string `yaml:"exposeHeaders"`
-		AllowCredentials bool     `yaml:"allowCredentials"`
-		MaxAge           string   `yaml:"maxAge"`
-	} `yaml:"cors"`
+	CORS `yaml:"cors"`
 
 	//HostUrl map[string]string `yaml:"hostUrl"`
 	//

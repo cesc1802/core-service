@@ -1,0 +1,13 @@
+{
+  "HelloPerson": "Hello {{.Name}}",
+  "COM0001": "Lỗi hệ thống {{.Error}}",
+  "COM0002": "Response trả về phải có định dạng \"error_code\" và \"error_msg\"",
+  "COM0003": "Response không được rỗng",
+  "COM0005": "Tham số chưa đúng",
+  "COM0005.required": "Tham số không được để trống",
+  "COM0005.min": "Tham số quá ngắn",
+  "COM0005.max": "Tham số vượt quá độ dài",
+  "COM0005.email": "Tham số phải là email",
+  "COM0005.numeric": "Tham số phải là dạng số",
+  "COM0005.phone_number": "Phone number is invalid"
+}
