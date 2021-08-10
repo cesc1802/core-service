@@ -6,14 +6,12 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func Cors(cfg config.Config) gin.HandlerFunc {
+func Cors(cfg config.CORS) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		c.Writer.Header().Set("Access-Control-Allow-Origin", util.SliceStringToString(cfg.CORS.AllowOrigins, ","))
-		c.Writer.Header().Set("Access-Control-Allow-Credentials", util.BoolToBoolString(cfg.CORS.AllowCredentials))
-		//"Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, Authorization, accept, origin, Cache-Control, X-Requested-With"
-		c.Writer.Header().Set("Access-Control-Allow-Headers", util.SliceStringToString(cfg.CORS.AllowHeaders, ","))
-		//"POST, OPTIONS, GET, PUT, DELETE"
-		c.Writer.Header().Set("Access-Control-Allow-Methods", util.SliceStringToString(cfg.CORS.AllowMethods, ","))
+		c.Writer.Header().Set("Access-Control-Allow-Origin", util.SliceStringToString(cfg.AllowOrigins, ","))
+		c.Writer.Header().Set("Access-Control-Allow-Credentials", util.BoolToBoolString(cfg.AllowCredentials))
+		c.Writer.Header().Set("Access-Control-Allow-Headers", util.SliceStringToString(cfg.AllowHeaders, ","))
+		c.Writer.Header().Set("Access-Control-Allow-Methods", util.SliceStringToString(cfg.AllowMethods, ","))
 
 		if c.Request.Method == "OPTIONS" {
 			c.AbortWithStatus(204)
