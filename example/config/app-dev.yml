@@ -3,7 +3,7 @@ server:
   port: 8085
 
 database:
-  host: 10.0.25.183
+  host: localhost
   port: 3306
   username: portal
   password: 4f242f2491e53c8e72f14c373f3dd19d

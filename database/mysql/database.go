@@ -1,4 +1,4 @@
-package database
+package mysql
 
 import (
 	"fmt"
@@ -12,30 +12,31 @@ import (
 )
 
 type Database struct {
-	DB *gorm.DB
+	config *config.Database
+	DB     *gorm.DB
 }
 
 func NewDatabase(c config.Config) (*Database, error) {
-	db, err := setupDatabase(c)
-	if err != nil {
-		return nil, err
-	}
-	return &Database{DB: db}, nil
+	return &Database{
+		config: &c.Database,
+		DB:     nil,
+	}, nil
 }
 
-func setupDatabase(c config.Config) (*gorm.DB, error) {
+func (d *Database) MustGet() *gorm.DB {
+	return d.DB
+}
 
-	//&timeout=%s&readTimeout=%s&writeTimeout=%s
-
+func (d *Database) Configure() error {
 	dsn := fmt.Sprintf("%s:%s@tcp(%s:%d)/%s?parseTime=true&loc=Local&charset=%s",
-		c.Database.Username,
-		c.Database.Password,
-		c.Database.Host,
-		c.Database.Port,
-		c.Database.Dbname,
-		//c.Database.ConnTimeout,
-		//c.Database.ReadTimeout,
-		//c.Database.WriteTimeout,
+		d.config.Username,
+		d.config.Password,
+		d.config.Host,
+		d.config.Port,
+		d.config.Dbname,
+		//d.config.ConnTimeout,
+		//d.config.ReadTimeout,
+		//d.config.WriteTimeout,
 		"utf8mb4",
 	)
 	var err error
@@ -51,29 +52,47 @@ func setupDatabase(c config.Config) (*gorm.DB, error) {
 		),
 	})
 	if err != nil {
-		return nil, err
+		return err
 	}
 
 	sqlDB, err := db.DB()
 	if err != nil {
-		return nil, err
+		return err
 	}
 
 	// SetMaxIdleConns sets the maximum number of connections in the idle connection pool.
-	sqlDB.SetMaxIdleConns(c.Database.MaxIdleConns)
+	sqlDB.SetMaxIdleConns(d.config.MaxIdleConns)
 
 	// SetMaxOpenConns sets the maximum number of open connections to the database.
-	sqlDB.SetMaxOpenConns(c.Database.MaxOpenConns)
+	sqlDB.SetMaxOpenConns(d.config.MaxOpenConns)
 
 	// SetConnMaxLifetime sets the maximum amount of time a connection may be reused.
-	duration, _ := time.ParseDuration(c.Database.ConnMaxLifetime)
+	duration, _ := time.ParseDuration(d.config.ConnMaxLifetime)
 	sqlDB.SetConnMaxLifetime(duration)
 
-	return db, nil
+	d.DB = db
+	return nil
 }
 
-func (r *Database) Close() error {
-	sqlDB, err := r.DB.DB()
+func (d *Database) Start() error {
+	if err := d.Configure(); err != nil {
+		return err
+	}
+
+	sqlDB, err := d.DB.DB()
+
+	if err != nil {
+		return err
+	}
+
+	if err = sqlDB.Ping(); err != nil {
+		fmt.Println(err)
+		return err
+	}
+	return nil
+}
+func (d *Database) Stop() error {
+	sqlDB, err := d.DB.DB()
 	if err != nil {
 		return err
 	}
@@ -82,4 +101,3 @@ func (r *Database) Close() error {
 	}
 	return nil
 }
-
