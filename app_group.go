@@ -3,6 +3,7 @@ package core_service
 import (
 	"context"
 	"errors"
+	"fmt"
 	"golang.org/x/sync/errgroup"
 	"os"
 	"os/signal"
@@ -25,7 +26,14 @@ type AppGroupOption struct {
 	Services []Service
 }
 
+//type ServiceContext interface {
+//	Get(prefix string) (interface{}, bool)
+//	MustGet(prefix string) interface{}
+//}
+
 type Service interface {
+	//ServiceContext
+	Name() string
 	Start() error
 	Stop() error
 }
@@ -55,6 +63,8 @@ func (appGroup *AppGroup) Run() error {
 			return srv.Stop()
 		})
 		g.Go(func() error {
+			fmt.Println(srv.Name())
+
 			return srv.Start()
 		})
 	}

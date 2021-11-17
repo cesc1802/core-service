@@ -8,6 +8,7 @@ database:
   username: portal
   password: 4f242f2491e53c8e72f14c373f3dd19d
   dbname: PORTAL
+  dbtype: mysql
   maxIdleConns: 10
   maxOpenConns: 1000
   connMaxLifetime: 1h

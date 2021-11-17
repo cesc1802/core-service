@@ -23,7 +23,7 @@ const (
 )
 
 const (
-	retryCount = 10
+	retryCount = 50
 )
 
 type GormOpt struct {
@@ -39,8 +39,7 @@ type gormDB struct {
 	db        *gorm.DB
 	isRunning bool
 	once      *sync.Once
-	dbCfg     *config.DatabaseConfig
-	*GormOpt
+	cfg       *config.DatabaseConfig
 }
 
 func NewGormDB(name, prefix string, cfg *config.DatabaseConfig) *gormDB {
@@ -49,20 +48,16 @@ func NewGormDB(name, prefix string, cfg *config.DatabaseConfig) *gormDB {
 		prefix:    prefix,
 		isRunning: false,
 		once:      new(sync.Once),
-		dbCfg:     cfg,
+		cfg:       cfg,
 	}
 }
 
 func (gdb *gormDB) GetPrefix() string {
-	return gdb.Prefix
+	return gdb.prefix
 }
 
 func (gdb *gormDB) Name() string {
 	return gdb.name
-}
-
-func (gdb *gormDB) isDisable() bool {
-	return gdb.Uri == ""
 }
 
 func getDBType(dbType string) GormDBType {
@@ -83,13 +78,13 @@ func getDBType(dbType string) GormDBType {
 func (gdb *gormDB) getDBConn(t GormDBType) (*gorm.DB, error) {
 	switch t {
 	case GormDBTypeMsSQL:
-		return gormdialects.MssqlDB(gdb.Uri)
+		return gormdialects.MssqlDB(gdb.cfg)
 	case GormDBTypeSQLite:
-		return gormdialects.SqliteDB(gdb.Uri)
+		return gormdialects.SqliteDB(gdb.cfg)
 	case GormDBTypePostgres:
-		return gormdialects.PostgresDB(gdb.Uri)
+		return gormdialects.PostgresDB(gdb.cfg)
 	case GormDBTypeMySQL:
-		return gormdialects.MySqlDB(gdb.Uri)
+		return gormdialects.MySqlDB(gdb.cfg)
 	}
 	return nil, nil
 }
@@ -99,18 +94,20 @@ func (gdb *gormDB) reconnectIfNeed() {
 		conn, err := gdb.db.DB()
 		if err = conn.Ping(); err != nil {
 			_ = conn.Close()
+			log.Printf("connect is gone, try to reconnect %s\n", gdb.name)
 			gdb.isRunning = false
 			gdb.once = new(sync.Once)
 			_ = gdb.Get()
+			return
 		}
-		time.Sleep(time.Second * time.Duration(gdb.PingInterval))
+		time.Sleep(time.Second * time.Duration(5))
 	}
 }
 
 func (gdb *gormDB) Get() interface{} {
 	gdb.once.Do(func() {
-		if !gdb.isRunning && gdb.isDisable() {
-			if db, err := gdb.getConnWithRetry(getDBType(gdb.DBType), math.MaxInt32); err != nil {
+		if !gdb.isRunning {
+			if db, err := gdb.getConnWithRetry(getDBType(gdb.cfg.DBType), math.MaxInt32); err == nil {
 				gdb.db = db
 				gdb.isRunning = true
 			} else {
@@ -150,11 +147,11 @@ func (gdb *gormDB) getConnWithRetry(dbType GormDBType, retry int) (*gorm.DB, err
 	return db, err
 }
 func (gdb *gormDB) Configure() error {
-	if gdb.isDisable() || gdb.isRunning {
+	if gdb.isRunning {
 		return nil
 	}
 
-	dbType := getDBType(gdb.DBType)
+	dbType := getDBType(gdb.cfg.DBType)
 	if dbType == GormDBTypeNotSupported {
 		return errors.New("gorm database type is not supported")
 	}
@@ -169,9 +166,18 @@ func (gdb *gormDB) Configure() error {
 	return nil
 }
 
-func (gdb *gormDB) Run() error {
+func (gdb *gormDB) Start() error {
 	if err := gdb.Configure(); err != nil {
 		return nil
+	}
+	return nil
+}
+
+func (gdb *gormDB) Stop() error {
+	if gdb.db != nil {
+		if conn, err := gdb.db.DB(); err != nil {
+			conn.Close()
+		}
 	}
 	return nil
 }

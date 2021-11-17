@@ -1,50 +1,52 @@
-package router
+package httpserver
 
 import (
 	"context"
-	"errors"
 	"fmt"
 	"github.com/cesc1802/core-service/config"
+	"github.com/cesc1802/core-service/httpserver/middleware"
 	"github.com/cesc1802/core-service/i18n"
-	"github.com/cesc1802/core-service/middleware"
-	appValidator "github.com/cesc1802/core-service/validator"
+	baseValidator "github.com/cesc1802/core-service/validator"
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"
 	"github.com/go-playground/validator/v10"
+	"github.com/pkg/errors"
 	"github.com/rs/zerolog"
 	"net"
 	"net/http"
 	"time"
 )
 
-type Router struct {
-	serverCfg     *config.ServerConfig
-	corsCfg       *config.CORSConfig
+type GinOpt struct {
+	name string
+	port string
+	host string
+}
+
+type GinService struct {
 	Engine        *gin.Engine
-	handlers      []func(*gin.Engine)
 	graceFullServ *http.Server
 	i18n          *i18n.I18n
 	logger        *zerolog.Logger
+	*GinOpt
 }
 
-func NewRouter(c config.Config, i18n *i18n.I18n, logger *zerolog.Logger) (*Router, error) {
-	return &Router{
-		i18n:      i18n,
-		serverCfg: &c.ServerConfig,
-		corsCfg:   &c.CORSConfig,
-		logger:    logger,
-		handlers:  []func(*gin.Engine){},
+func NewGinService(c config.Config, i18n *i18n.I18n, logger *zerolog.Logger) (*GinService, error) {
+	return &GinService{
+		i18n:   i18n,
+		logger: logger,
+		GinOpt: &GinOpt{
+			name: "GIN-Service",
+			port: c.ServerConfig.Port,
+			host: c.ServerConfig.Host,
+		},
 	}, nil
 }
 
-func (r *Router) AddHandle(hdl func(*gin.Engine)) {
-	r.handlers = append(r.handlers, hdl)
-}
-
-func (r *Router) Configure() error {
+func (r *GinService) Configure() error {
 	r.Engine = gin.New()
 	if v, ok := binding.Validator.Engine().(*validator.Validate); ok {
-		v.RegisterTagNameFunc(appValidator.JsonTagNameFunc)
+		v.RegisterTagNameFunc(baseValidator.JsonTagNameFunc)
 	}
 	r.Engine.RedirectTrailingSlash = true
 	r.Engine.RedirectFixedPath = true
@@ -52,31 +54,28 @@ func (r *Router) Configure() error {
 	// Recovery
 	r.Engine.Use(middleware.Recovery(r.i18n))
 
-	// CORS
-	r.Engine.Use(middleware.Cors(r.corsCfg))
-
-	//TODO: you can add more configure here
+	//TODO: you can add more middleware here
 
 	return nil
 
 }
 
-func (r *Router) Start() error {
+func (r *GinService) Name() string {
+	return ""
+}
+
+func (r *GinService) Start() error {
 	if err := r.Configure(); err != nil {
 		return err
 	}
 
-	for _, hdl := range r.handlers {
-		hdl(r.Engine)
-	}
-
 	r.graceFullServ = &http.Server{
-		Addr:    fmt.Sprintf("%s:%s", r.serverCfg.Host, r.serverCfg.Port),
+		Addr:    fmt.Sprintf("%s:%s", r.host, r.port),
 		Handler: r.Engine,
 	}
-	r.logger.Info().Msgf("Listening and serving HTTP on %v:%v", r.serverCfg.Host, r.serverCfg.Port)
+	r.logger.Info().Msgf("Listening and serving HTTP on %v:%v", r.host, r.port)
 
-	lis, err := net.Listen("tcp", fmt.Sprintf("%s:%s", r.serverCfg.Host, r.serverCfg.Port))
+	lis, err := net.Listen("tcp", fmt.Sprintf("%s:%s", r.host, r.port))
 	if err != nil {
 		r.logger.Info().Msgf("Listening error: %v", err)
 		return err
@@ -91,7 +90,7 @@ func (r *Router) Start() error {
 	return nil
 }
 
-func (r *Router) Stop() error {
+func (r *GinService) Stop() error {
 	ctx, cancelFn := context.WithTimeout(context.Background(), time.Second*10)
 	defer cancelFn()
 
