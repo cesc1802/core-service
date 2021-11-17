@@ -15,7 +15,7 @@ type Database struct {
 	DB *gorm.DB
 }
 
-func NewDatabase(c config.Config) (*Database, error) {
+func NewDatabase(c config.DatabaseConfig) (*Database, error) {
 	db, err := setupDatabase(c)
 	if err != nil {
 		return nil, err
@@ -23,16 +23,16 @@ func NewDatabase(c config.Config) (*Database, error) {
 	return &Database{DB: db}, nil
 }
 
-func setupDatabase(c config.Config) (*gorm.DB, error) {
+func setupDatabase(c config.DatabaseConfig) (*gorm.DB, error) {
 
 	//&timeout=%s&readTimeout=%s&writeTimeout=%s
 
 	dsn := fmt.Sprintf("%s:%s@tcp(%s:%d)/%s?parseTime=true&loc=Local&charset=%s",
-		c.Database.Username,
-		c.Database.Password,
-		c.Database.Host,
-		c.Database.Port,
-		c.Database.Dbname,
+		c.Username,
+		c.Password,
+		c.Host,
+		c.Port,
+		c.Dbname,
 		//c.Database.ConnTimeout,
 		//c.Database.ReadTimeout,
 		//c.Database.WriteTimeout,
@@ -60,13 +60,13 @@ func setupDatabase(c config.Config) (*gorm.DB, error) {
 	}
 
 	// SetMaxIdleConns sets the maximum number of connections in the idle connection pool.
-	sqlDB.SetMaxIdleConns(c.Database.MaxIdleConns)
+	sqlDB.SetMaxIdleConns(c.MaxIdleConns)
 
 	// SetMaxOpenConns sets the maximum number of open connections to the database.
-	sqlDB.SetMaxOpenConns(c.Database.MaxOpenConns)
+	sqlDB.SetMaxOpenConns(c.MaxOpenConns)
 
 	// SetConnMaxLifetime sets the maximum amount of time a connection may be reused.
-	duration, _ := time.ParseDuration(c.Database.ConnMaxLifetime)
+	duration, _ := time.ParseDuration(c.ConnMaxLifetime)
 	sqlDB.SetConnMaxLifetime(duration)
 
 	return db, nil
@@ -82,4 +82,3 @@ func (r *Database) Close() error {
 	}
 	return nil
 }
-

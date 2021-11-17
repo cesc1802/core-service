@@ -18,20 +18,20 @@ import (
 )
 
 type Router struct {
-	serverCfg     *config.Server
-	corsCfg       *config.CORS
+	serverCfg     *config.ServerConfig
+	corsCfg       *config.CORSConfig
 	Engine        *gin.Engine
 	handlers      []func(*gin.Engine)
 	graceFullServ *http.Server
-	I18n          *i18n.I18n
+	i18n          *i18n.I18n
 	logger        *zerolog.Logger
 }
 
 func NewRouter(c config.Config, i18n *i18n.I18n, logger *zerolog.Logger) (*Router, error) {
 	return &Router{
-		I18n:      i18n,
-		serverCfg: &c.Server,
-		corsCfg:   &c.CORS,
+		i18n:      i18n,
+		serverCfg: &c.ServerConfig,
+		corsCfg:   &c.CORSConfig,
 		logger:    logger,
 		handlers:  []func(*gin.Engine){},
 	}, nil
@@ -50,10 +50,10 @@ func (r *Router) Configure() error {
 	r.Engine.RedirectFixedPath = true
 
 	// Recovery
-	r.Engine.Use(middleware.Recovery(r.I18n))
+	r.Engine.Use(middleware.Recovery(r.i18n))
 
 	// CORS
-	r.Engine.Use(middleware.Cors(*r.corsCfg))
+	r.Engine.Use(middleware.Cors(r.corsCfg))
 
 	//TODO: you can add more configure here
 

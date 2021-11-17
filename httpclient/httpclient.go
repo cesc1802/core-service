@@ -6,17 +6,17 @@ import (
 	"time"
 )
 
-func NewRestyClient(c config.Config, baseUrl string) (*resty.Client, error) {
+func NewRestyClient(c config.HttpClientConfig, baseUrl string) (*resty.Client, error) {
 	// Create a Resty Client
 	client := resty.New()
 
 	// Unique settings at Client level
 	//--------------------------------
 	// Enable debug mode
-	client.SetDebug(c.Resty.Debug)
+	client.SetDebug(c.Debug)
 
 	// Set client timeout as per your need
-	duration, err := time.ParseDuration(c.Resty.Timeout)
+	duration, err := time.ParseDuration(c.Timeout)
 	if err != nil {
 		return nil, err
 	}
