@@ -10,6 +10,9 @@ import (
 )
 
 func SliceStringToString(sliceVal []string, sep string) string {
+	if sep == "" {
+		sep = ","
+	}
 	return strings.Join(sliceVal, sep)
 }
 

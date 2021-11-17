@@ -14,16 +14,16 @@ type Redis struct {
 	CommonDur time.Duration
 }
 
-func NewRedis(c config.Config) (*Redis, error) {
-	commonDur, err := time.ParseDuration(c.Redis.Ttl.Common)
+func NewRedis(c config.RedisConfig) (*Redis, error) {
+	commonDur, err := time.ParseDuration("20")
 	if err != nil {
 		return nil, err
 	}
 	return &Redis{
 		Rdb: redis.NewClient(&redis.Options{
-			Addr:     fmt.Sprintf("%s:%s", c.Redis.Host, c.Redis.Port),
-			Password: c.Redis.Password,
-			DB:       c.Redis.Database,
+			Addr:     fmt.Sprintf("%s:%s", c.Host, c.Port),
+			Password: c.Password,
+			DB:       c.Database,
 		}),
 		CommonDur: commonDur,
 	}, nil

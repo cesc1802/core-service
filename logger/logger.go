@@ -46,14 +46,14 @@ func (t resilientMultiWriter) Write(p []byte) (n int, err error) {
 
 var levelErrorLogged = false
 
-func newZeroLog(cfg config.Config) *zerolog.Logger {
+func newZeroLog(cfg config.LogConfig) *zerolog.Logger {
 	var writers []io.Writer
 
-	if cfg.Log.ConsoleLoggingEnabled {
+	if cfg.ConsoleLoggingEnabled {
 
 		writers = append(writers, createConsoleLogger(cfg))
 	}
-	if cfg.Log.FileLoggingEnabled {
+	if cfg.FileLoggingEnabled {
 		rollingLogger, err := createRollingLogger(cfg)
 		if err != nil {
 
@@ -69,24 +69,24 @@ func newZeroLog(cfg config.Config) *zerolog.Logger {
 
 	multi := resilientMultiWriter{writers}
 
-	level, levelErr := zerolog.ParseLevel(cfg.Log.Level)
+	level, levelErr := zerolog.ParseLevel(cfg.Level)
 	if levelErr != nil {
 		level = zerolog.InfoLevel
 	}
 	log := zerolog.New(multi).With().Timestamp().Logger().Level(level)
 	if !levelErrorLogged && levelErr != nil {
-		log.Error().Msgf("Failed to parse log level %q, using %q instead", cfg.Log.Level, level)
+		log.Error().Msgf("Failed to parse log level %q, using %q instead", cfg.Level, level)
 		levelErrorLogged = true
 	}
 
 	return &log
 }
 
-func Create(cfg config.Config) *zerolog.Logger {
+func Create(cfg config.LogConfig) *zerolog.Logger {
 	return newZeroLog(cfg)
 }
 
-func createConsoleLogger(_ config.Config) io.Writer {
+func createConsoleLogger(_ config.LogConfig) io.Writer {
 	consoleOut := os.Stderr
 	return zerolog.ConsoleWriter{
 		Out:        colorable.NewColorable(consoleOut),
@@ -106,11 +106,11 @@ var (
 	rotatingFileInit fileInitializer
 )
 
-func createFileWriter(cfg config.Config) (io.Writer, error) {
+func createFileWriter(cfg config.LogConfig) (io.Writer, error) {
 	singleFileInit.once.Do(func() {
 
 		var logFile io.Writer
-		fullPath := filepath.Join(cfg.Log.Directory, cfg.Log.Filename)
+		fullPath := filepath.Join(cfg.Directory, cfg.Filename)
 
 		// Try to open the existing file
 		logFile, err := os.OpenFile(fullPath, os.O_APPEND|os.O_WRONLY, filePermMode)
@@ -131,9 +131,9 @@ func createFileWriter(cfg config.Config) (io.Writer, error) {
 	return singleFileInit.writer, singleFileInit.creationError
 }
 
-func createDirFile(cfg config.Config) (io.Writer, error) {
-	if cfg.Log.Directory != "" {
-		err := os.MkdirAll(cfg.Log.Directory, dirPermMode)
+func createDirFile(cfg config.LogConfig) (io.Writer, error) {
+	if cfg.Directory != "" {
+		err := os.MkdirAll(cfg.Directory, dirPermMode)
 
 		if err != nil {
 			return nil, fmt.Errorf("unable to create directories for new logfile: %s", err)
@@ -142,7 +142,7 @@ func createDirFile(cfg config.Config) (io.Writer, error) {
 
 	mode := os.FileMode(filePermMode)
 
-	fullPath := filepath.Join(cfg.Log.Directory, cfg.Log.Filename)
+	fullPath := filepath.Join(cfg.Directory, cfg.Filename)
 	logFile, err := os.OpenFile(fullPath, os.O_CREATE|os.O_WRONLY|os.O_APPEND, mode)
 	if err != nil {
 		return nil, fmt.Errorf("unable to create a new logfile: %s", err)
@@ -151,18 +151,18 @@ func createDirFile(cfg config.Config) (io.Writer, error) {
 	return logFile, nil
 }
 
-func createRollingLogger(cfg config.Config) (io.Writer, error) {
+func createRollingLogger(cfg config.LogConfig) (io.Writer, error) {
 	rotatingFileInit.once.Do(func() {
-		if err := os.MkdirAll(cfg.Log.Directory, dirPermMode); err != nil {
+		if err := os.MkdirAll(cfg.Directory, dirPermMode); err != nil {
 			rotatingFileInit.creationError = err
 			return
 		}
 
 		rotatingFileInit.writer = &lumberjack.Logger{
-			Filename:   path.Join(cfg.Log.Directory, cfg.Log.Filename),
-			MaxBackups: cfg.Log.MaxBackups,
-			MaxSize:    cfg.Log.MaxSize,
-			MaxAge:     cfg.Log.MaxAge,
+			Filename:   path.Join(cfg.Directory, cfg.Filename),
+			MaxBackups: cfg.MaxBackups,
+			MaxSize:    cfg.MaxSize,
+			MaxAge:     cfg.MaxAge,
 		}
 	})
 

@@ -59,10 +59,10 @@ func handlers() func(engine *gin.Engine) {
 //}
 
 func main() {
-	configConfig, _ := config.LoadConfig()
-	i18n, _ := i18n.NewI18n(configConfig)
-	logger := logger2.Create(configConfig)
-	router, _ := router.NewRouter(configConfig, i18n, logger)
+	coreCfg, _ := config.LoadConfig()
+	i18n, _ := i18n.NewI18n(coreCfg.I18nConfig)
+	logger := logger2.Create(coreCfg.LogConfig)
+	router, _ := router.NewRouter(coreCfg, i18n, logger)
 	router.AddHandle(handlers())
 
 	appGroup := core_service.NewAppGroup(

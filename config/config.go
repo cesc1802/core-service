@@ -11,31 +11,37 @@ import (
 type Config struct {
 	Env string
 
-	Database struct {
-		Host            string `yaml:"host"`
-		Port            int    `yaml:"port"`
-		Username        string `yaml:"username"`
-		Password        string `yaml:"password"`
-		Dbname          string `yaml:"dbname"`
-		MaxIdleConns    int    `yaml:"maxIdleConns"`
-		MaxOpenConns    int    `yaml:"maxOpenConns"`
-		ConnMaxLifetime string `yaml:"connMaxLifetime"`
-		//ConnTimeout     time.Duration `yaml:"connTimeout"`
-		//ReadTimeout     time.Duration `yaml:"readTimeout"`
-		//WriteTimeout    time.Duration `yaml:"writeTimeout"`
-	} `yaml:"database"`
+	RedisConfig      `mapstructure:"redis"`
+	DatabaseConfig   `mapstructure:"database"`
+	ServerConfig     `mapstructure:"server"`
+	HttpClientConfig `mapstructure:"client"`
+	I18nConfig       `mapstructure:"i18n"`
+	CORSConfig       `mapstructure:"cors"`
+	LogConfig        `mapstructure:"log"`
 
-	Redis struct {
-		Host     string `yaml:"host"`
-		Port     string `yaml:"port"`
-		Password string `yaml:"password"`
-		Database int    `yaml:"database"`
-		Ttl      struct {
-			Common string `yaml:"common"`
-		} `mapstructure:"ttls"`
-	} `yaml:"redis"`
+	//Redis struct {
+	//	Host     string `yaml:"host"`
+	//	Port     string `yaml:"port"`
+	//	Password string `yaml:"password"`
+	//	Database int    `yaml:"database"`
+	//	Ttl      struct {
+	//		Common string `yaml:"common"`
+	//	} `mapstructure:"ttls"`
+	//} `yaml:"redis"`
 
-	Server `yaml:"server"`
+	//Database struct {
+	//	Host            string `yaml:"host"`
+	//	Port            int    `yaml:"port"`
+	//	Username        string `yaml:"username"`
+	//	Password        string `yaml:"password"`
+	//	Dbname          string `yaml:"dbname"`
+	//	MaxIdleConns    int    `yaml:"maxIdleConns"`
+	//	MaxOpenConns    int    `yaml:"maxOpenConns"`
+	//	ConnMaxLifetime string `yaml:"connMaxLifetime"`
+	//	//ConnTimeout     time.Duration `yaml:"connTimeout"`
+	//	//ReadTimeout     time.Duration `yaml:"readTimeout"`
+	//	//WriteTimeout    time.Duration `yaml:"writeTimeout"`
+	//} `yaml:"database"`
 
 	//Jwt struct {
 	//	Realm              string `yaml:"realm"`
@@ -46,16 +52,14 @@ type Config struct {
 	//	LongRefreshExpTime string `yaml:"longRefreshExpTime"`
 	//} `yaml:"jwt"`
 
-	Resty struct {
-		Debug   bool   `yaml:"debug"`
-		Timeout string `yaml:"timeout"`
-	} `yaml:"resty"`
+	//Resty struct {
+	//	Debug   bool   `yaml:"debug"`
+	//	Timeout string `yaml:"timeout"`
+	//} `yaml:"resty"`
 
-	I18n struct {
-		Langs []string `yaml:"langs"`
-	} `yaml:"i18n"`
-
-	CORS `yaml:"cors"`
+	//I18n struct {
+	//	Langs []string `yaml:"langs"`
+	//} `yaml:"i18n"`
 
 	//HostUrl map[string]string `yaml:"hostUrl"`
 	//
@@ -63,17 +67,17 @@ type Config struct {
 	//	AuthorizedRequests []ConfigAuthorizedRequests `yaml:"authorizedRequests"`
 	//} `yaml:"security"`
 
-	Log struct {
-		Level                 string `yaml:"level"`
-		ConsoleLoggingEnabled bool   `yaml:"consoleLoggingEnabled"`
-		EncodeLogsAsJson      bool   `yaml:"encodeLogsAsJson"`
-		FileLoggingEnabled    bool   `yaml:"fileLoggingEnabled"`
-		Directory             string `yaml:"directory"`
-		Filename              string `yaml:"filename"`
-		MaxSize               int    `yaml:"maxSize"`
-		MaxBackups            int    `yaml:"maxBackups"`
-		MaxAge                int    `yaml:"maxAge"`
-	} `yaml:"log"`
+	//Log struct {
+	//	Level                 string `yaml:"level"`
+	//	ConsoleLoggingEnabled bool   `yaml:"consoleLoggingEnabled"`
+	//	EncodeLogsAsJson      bool   `yaml:"encodeLogsAsJson"`
+	//	FileLoggingEnabled    bool   `yaml:"fileLoggingEnabled"`
+	//	Directory             string `yaml:"directory"`
+	//	Filename              string `yaml:"filename"`
+	//	MaxSize               int    `yaml:"maxSize"`
+	//	MaxBackups            int    `yaml:"maxBackups"`
+	//	MaxAge                int    `yaml:"maxAge"`
+	//} `yaml:"log"`
 }
 
 // LoadConfig reads configuration from file or environment variables.

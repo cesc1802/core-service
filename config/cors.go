@@ -1,6 +1,6 @@
 package config
 
-type CORS struct {
+type CORSConfig struct {
 	AllowOrigins     []string `yaml:"allowOrigins"`
 	AllowMethods     []string `yaml:"allowMethods"`
 	AllowHeaders     []string `yaml:"allowHeaders"`

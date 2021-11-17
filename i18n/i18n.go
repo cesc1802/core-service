@@ -14,11 +14,11 @@ type I18n struct {
 	MapLocalizer map[string]*i18n.Localizer
 }
 
-func NewI18n(c config.Config) (*I18n, error) {
+func NewI18n(c config.I18nConfig) (*I18n, error) {
 	bundle := i18n.NewBundle(language.English)
 	bundle.RegisterUnmarshalFunc("json", json.Unmarshal)
 	mapLocalizer := make(map[string]*i18n.Localizer)
-	for _, lang := range c.I18n.Langs {
+	for _, lang := range c.Languages {
 		bundle.MustLoadMessageFile(fmt.Sprintf("./i18n/%v.%v.json", constant.I18nMessage, lang))
 		mapLocalizer[lang] = i18n.NewLocalizer(bundle, lang)
 	}
@@ -40,4 +40,3 @@ func (r *I18n) MustLocalize(lang string, msgId string, templateData map[string]s
 		TemplateData: templateData,
 	})
 }
-
