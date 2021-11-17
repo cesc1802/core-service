@@ -1,20 +1,18 @@
 package main
 
 import (
-	core_service "github.com/cesc1802/core-service"
+	"fmt"
 	"github.com/cesc1802/core-service/config"
-	"github.com/cesc1802/core-service/database"
 	"github.com/cesc1802/core-service/i18n"
-	logger2 "github.com/cesc1802/core-service/logger"
 	"github.com/cesc1802/core-service/router"
 	"github.com/gin-gonic/gin"
 )
 
 type App struct {
-	config   config.Config
-	router   *router.Router
-	i18n     *i18n.I18n
-	database *database.Database
+	config config.Config
+	router *router.Router
+	i18n   *i18n.I18n
+	//database *database.Database
 }
 
 type User struct {
@@ -60,18 +58,19 @@ func handlers() func(engine *gin.Engine) {
 
 func main() {
 	coreCfg, _ := config.LoadConfig()
-	i18n, _ := i18n.NewI18n(coreCfg.I18nConfig)
-	logger := logger2.Create(coreCfg.LogConfig)
-	router, _ := router.NewRouter(coreCfg, i18n, logger)
-	router.AddHandle(handlers())
-
-	appGroup := core_service.NewAppGroup(
-		core_service.AppGroupOption{
-			Name:     "Gin Service",
-			Services: []core_service.Service{router},
-		})
-
-	if err := appGroup.Run(); err != nil {
-		panic(err)
-	}
+	fmt.Println(coreCfg)
+	//i18n, _ := i18n.NewI18n(coreCfg.I18nConfig)
+	//logger := logger2.Create(coreCfg.LogConfig)
+	//router, _ := router.NewRouter(coreCfg, i18n, logger)
+	////router.AddHandle(handlers())
+	//
+	//appGroup := core_service.NewAppGroup(
+	//	core_service.AppGroupOption{
+	//		Name:     "Gin Service",
+	//		Services: []core_service.Service{router},
+	//	})
+	//
+	//if err := appGroup.Run(); err != nil {
+	//	panic(err)
+	//}
 }

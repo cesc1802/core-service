@@ -50,7 +50,6 @@ func newZeroLog(cfg config.LogConfig) *zerolog.Logger {
 	var writers []io.Writer
 
 	if cfg.ConsoleLoggingEnabled {
-
 		writers = append(writers, createConsoleLogger(cfg))
 	}
 	if cfg.FileLoggingEnabled {
