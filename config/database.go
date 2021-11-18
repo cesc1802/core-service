@@ -5,7 +5,8 @@ type DatabaseConfig struct {
 	Port            int    `yaml:"port"`
 	Username        string `yaml:"username"`
 	Password        string `yaml:"password"`
-	Dbname          string `yaml:"dbname"`
+	DBName          string `yaml:"dbname"`
+	DBType          string `yaml:"dbtype"`
 	MaxIdleConns    int    `yaml:"maxIdleConns"`
 	MaxOpenConns    int    `yaml:"maxOpenConns"`
 	ConnMaxLifetime string `yaml:"connMaxLifetime"`
