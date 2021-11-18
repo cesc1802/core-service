@@ -23,7 +23,7 @@ const (
 )
 
 const (
-	retryCount = 50
+	retryCount = 10
 )
 
 type GormOpt struct {

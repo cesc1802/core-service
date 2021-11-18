@@ -9,7 +9,9 @@ require (
 	github.com/go-resty/resty/v2 v2.6.0
 	github.com/mattn/go-colorable v0.1.11
 	github.com/nicksnyder/go-i18n/v2 v2.1.2
+	github.com/pkg/errors v0.9.1
 	github.com/rs/zerolog v1.23.0
+	github.com/spf13/cobra v1.2.1
 	github.com/spf13/viper v1.8.1
 	golang.org/x/sync v0.0.0-20210220032951-036812b2e83c
 	golang.org/x/sys v0.0.0-20211116061358-0a5406a5449c // indirect

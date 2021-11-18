@@ -21,20 +21,23 @@ type GinOpt struct {
 	name string
 	port string
 	host string
+	mode string
 }
 
 type GinService struct {
 	Engine        *gin.Engine
 	graceFullServ *http.Server
+	handlers      []func(engine *gin.Engine)
 	i18n          *i18n.I18n
 	logger        *zerolog.Logger
 	*GinOpt
 }
 
-func NewGinService(c config.Config, i18n *i18n.I18n, logger *zerolog.Logger) (*GinService, error) {
+func New(c config.Config, i18n *i18n.I18n, logger *zerolog.Logger) (*GinService, error) {
 	return &GinService{
-		i18n:   i18n,
-		logger: logger,
+		i18n:     i18n,
+		logger:   logger,
+		handlers: []func(*gin.Engine){},
 		GinOpt: &GinOpt{
 			name: "GIN-Service",
 			port: c.ServerConfig.Port,
@@ -44,10 +47,17 @@ func NewGinService(c config.Config, i18n *i18n.I18n, logger *zerolog.Logger) (*G
 }
 
 func (r *GinService) Configure() error {
+	if r.mode == "" {
+		r.mode = "debug"
+	}
+
+	gin.SetMode(r.mode)
 	r.Engine = gin.New()
+
 	if v, ok := binding.Validator.Engine().(*validator.Validate); ok {
 		v.RegisterTagNameFunc(baseValidator.JsonTagNameFunc)
 	}
+
 	r.Engine.RedirectTrailingSlash = true
 	r.Engine.RedirectFixedPath = true
 
@@ -61,12 +71,17 @@ func (r *GinService) Configure() error {
 }
 
 func (r *GinService) Name() string {
-	return ""
+	return r.name
 }
 
 func (r *GinService) Start() error {
 	if err := r.Configure(); err != nil {
 		return err
+	}
+
+	// Setup handlers
+	for _, hdl := range r.handlers {
+		hdl(r.Engine)
 	}
 
 	r.graceFullServ = &http.Server{
@@ -99,4 +114,8 @@ func (r *GinService) Stop() error {
 		_ = r.graceFullServ.Shutdown(ctx)
 	}
 	return nil
+}
+
+func (r *GinService) AddHandler(hdl func(engine *gin.Engine)) {
+	r.handlers = append(r.handlers, hdl)
 }

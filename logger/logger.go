@@ -81,7 +81,7 @@ func newZeroLog(cfg config.LogConfig) *zerolog.Logger {
 	return &log
 }
 
-func Create(cfg config.LogConfig) *zerolog.Logger {
+func NewLogger(cfg config.LogConfig) *zerolog.Logger {
 	return newZeroLog(cfg)
 }
 
