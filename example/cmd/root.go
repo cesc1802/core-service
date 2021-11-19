@@ -11,7 +11,6 @@ var rootCmd = &cobra.Command{
 
 func init() {
 	rootCmd.AddCommand(serverCmd)
-	rootCmd.AddCommand(demoEvtCmd)
 }
 
 func Execute() error {

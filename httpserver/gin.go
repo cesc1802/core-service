@@ -33,7 +33,7 @@ type GinService struct {
 	*GinOpt
 }
 
-func New(c config.Config, i18n *i18n.I18n, l logger.Logger) (*GinService, error) {
+func New(c config.Config, i18n *i18n.I18n, l logger.Logger) *GinService {
 	return &GinService{
 		i18n:     i18n,
 		logger:   l,
@@ -43,7 +43,7 @@ func New(c config.Config, i18n *i18n.I18n, l logger.Logger) (*GinService, error)
 			port: c.ServerConfig.Port,
 			host: c.ServerConfig.Host,
 		},
-	}, nil
+	}
 }
 
 func (r *GinService) Configure() error {

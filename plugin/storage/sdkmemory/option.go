@@ -17,7 +17,6 @@ type Options struct {
 	Table string
 	// Context should contain all implementation specific options, using context.WithValue.
 	Context context.Context
-	// Client to use for RPC
 }
 
 // Option sets values in Options
