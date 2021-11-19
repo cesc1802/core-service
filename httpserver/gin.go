@@ -6,12 +6,12 @@ import (
 	"github.com/cesc1802/core-service/config"
 	"github.com/cesc1802/core-service/httpserver/middleware"
 	"github.com/cesc1802/core-service/i18n"
+	"github.com/cesc1802/core-service/logger"
 	baseValidator "github.com/cesc1802/core-service/validator"
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"
 	"github.com/go-playground/validator/v10"
 	"github.com/pkg/errors"
-	"github.com/rs/zerolog"
 	"net"
 	"net/http"
 	"time"
@@ -29,14 +29,14 @@ type GinService struct {
 	graceFullServ *http.Server
 	handlers      []func(engine *gin.Engine)
 	i18n          *i18n.I18n
-	logger        *zerolog.Logger
+	logger        logger.Logger
 	*GinOpt
 }
 
-func New(c config.Config, i18n *i18n.I18n, logger *zerolog.Logger) (*GinService, error) {
+func New(c config.Config, i18n *i18n.I18n, l logger.Logger) (*GinService, error) {
 	return &GinService{
 		i18n:     i18n,
-		logger:   logger,
+		logger:   l,
 		handlers: []func(*gin.Engine){},
 		GinOpt: &GinOpt{
 			name: "GIN-Service",
@@ -88,11 +88,11 @@ func (r *GinService) Start() error {
 		Addr:    fmt.Sprintf("%s:%s", r.host, r.port),
 		Handler: r.Engine,
 	}
-	r.logger.Info().Msgf("Listening and serving HTTP on %v:%v", r.host, r.port)
+	r.logger.Info("Listening and serving HTTP on %v:%v", r.host, r.port)
 
 	lis, err := net.Listen("tcp", fmt.Sprintf("%s:%s", r.host, r.port))
 	if err != nil {
-		r.logger.Info().Msgf("Listening error: %v", err)
+		r.logger.Info("Listening error: %v", err)
 		return err
 	}
 
@@ -110,7 +110,7 @@ func (r *GinService) Stop() error {
 	defer cancelFn()
 
 	if r.graceFullServ != nil {
-		r.logger.Info().Msg("shutting down....")
+		r.logger.Info("shutting down....")
 		_ = r.graceFullServ.Shutdown(ctx)
 	}
 	return nil

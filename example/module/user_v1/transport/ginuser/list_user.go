@@ -11,11 +11,11 @@ func ListUser(sc goservice.Service) gin.HandlerFunc {
 	return func(c *gin.Context) {
 
 		db := sc.MustGet("portal").(*gorm.DB)
-		result := map[string]interface{}{}
+		var user []user
 
-		db.Table("users").Find(&result)
+		db.Table("users").Find(&user)
 		c.JSON(http.StatusOK, gin.H{
-			"data": result,
+			"data": user,
 		})
 	}
 }

@@ -3,9 +3,9 @@ package sdkgorm
 import (
 	"errors"
 	"github.com/cesc1802/core-service/config"
+	"github.com/cesc1802/core-service/logger"
 	"github.com/cesc1802/core-service/plugin/storage/sdkgorm/gormdialects"
 	"gorm.io/gorm"
-	"log"
 	"math"
 	"strings"
 	"sync"
@@ -26,19 +26,13 @@ const (
 	retryCount = 10
 )
 
-type GormOpt struct {
-	Uri          string
-	Prefix       string
-	DBType       string
-	PingInterval int //unit in second
-}
-
 type gormDB struct {
 	prefix    string
 	name      string
 	db        *gorm.DB
 	isRunning bool
 	once      *sync.Once
+	logger    logger.Interface
 	cfg       *config.DatabaseConfig
 }
 
@@ -94,7 +88,7 @@ func (gdb *gormDB) reconnectIfNeed() {
 		conn, err := gdb.db.DB()
 		if err = conn.Ping(); err != nil {
 			_ = conn.Close()
-			log.Printf("connect is gone, try to reconnect %s\n", gdb.name)
+			gdb.logger.Info("connect is gone, try to connect %s\n", gdb.name)
 			gdb.isRunning = false
 			gdb.once = new(sync.Once)
 			_ = gdb.Get()
@@ -111,8 +105,7 @@ func (gdb *gormDB) Get() interface{} {
 				gdb.db = db
 				gdb.isRunning = true
 			} else {
-				log.Printf("%v", err)
-				log.Fatalf("%s connection cannot reconnect\n", gdb.name)
+				gdb.logger.Fatal("connection cannot reconnect\n", gdb.name, err)
 			}
 		}
 	})

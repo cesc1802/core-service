@@ -1,9 +1,9 @@
 package response
 
 type response struct {
-	Data       interface{}  `json:"data"`
-	Paging     interface{}  `json:"paging,omitempty"`
-	Filter     interface{}  `json:"filter,omitempty"`
+	Data   interface{} `json:"data"`
+	Paging interface{} `json:"paging,omitempty"`
+	Filter interface{} `json:"filter,omitempty"`
 }
 
 type errorField struct {
@@ -19,4 +19,3 @@ func NewSuccessResponse(data, paging, filter interface{}) *response {
 func SimpleSuccessResponse(data interface{}) *response {
 	return NewSuccessResponse(data, nil, nil)
 }
-
