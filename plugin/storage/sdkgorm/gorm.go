@@ -33,10 +33,10 @@ type gormDB struct {
 	isRunning bool
 	once      *sync.Once
 	logger    logger.Interface
-	cfg       *config.DatabaseConfig
+	cfg       *config.SQLDBConfig
 }
 
-func NewGormDB(name, prefix string, cfg *config.DatabaseConfig) *gormDB {
+func NewGormDB(name, prefix string, cfg *config.SQLDBConfig) *gormDB {
 	return &gormDB{
 		name:      name,
 		prefix:    prefix,

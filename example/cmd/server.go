@@ -25,8 +25,8 @@ var serverCmd = &cobra.Command{
 			WithName("demo"),
 			WithVersion("1.0.0"),
 			WithHttpServer(httpserver.New(coreCfg, i18n, *baseLogger)),
-			WithInitRunnable(sdkgorm.NewGormDB("portal", "portal", &coreCfg.DatabaseConfig)),
-			WithInitRunnable(sdkgorm.NewGormDB("demo-portal", "demo-portal", &coreCfg.DatabaseConfig)),
+			WithInitRunnable(sdkgorm.NewGormDB("portal", "portal", &coreCfg.SQLDBConfigs[0])),
+			WithInitRunnable(sdkgorm.NewGormDB("demo-portal", "demo-portal", &coreCfg.SQLDBConfigs[1])),
 			WithInitRunnable(pubsub.New("pubsub", "pubsub")),
 		)
 

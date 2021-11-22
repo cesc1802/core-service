@@ -5,6 +5,7 @@ import (
 	"github.com/cesc1802/core-service/constant"
 	"github.com/spf13/viper"
 	"os"
+	"path/filepath"
 	"strings"
 )
 
@@ -12,7 +13,8 @@ type Config struct {
 	Env string
 
 	RedisConfig      `mapstructure:"redis"`
-	DatabaseConfig   `mapstructure:"database"`
+	SQLDBConfigs     `mapstructure:"databases"`
+	NoSQLConfigs     `mapstructure:"nosqldatabases"`
 	ServerConfig     `mapstructure:"server"`
 	HttpClientConfig `mapstructure:"client"`
 	I18nConfig       `mapstructure:"i18n"`
@@ -21,30 +23,43 @@ type Config struct {
 }
 
 // LoadConfig reads configuration from file or environment variables.
-func LoadConfig() (Config, error) {
-	viper.AddConfigPath("./config")
+func LoadConfig() (c Config, err error) {
 	env := extractEnv()
+	defer func() {
+		if err != nil {
+			c = Config{
+				Env: env,
+			}
+		}
+	}()
+	// get current path
+	pwd, err := os.Getwd()
+	if err != nil {
+		return
+	}
+
+	path, err := filepath.Abs(pwd)
+	if err != nil {
+		return
+	}
+
+	// load config from config directory
+	if path == "/" {
+		viper.AddConfigPath("/config")
+	} else {
+		viper.AddConfigPath(fmt.Sprintf("%v/config", path))
+	}
 	viper.SetConfigName(fmt.Sprintf("app-%v", strings.ToLower(env)))
 	viper.SetConfigType("yaml")
 	viper.AutomaticEnv()
 
-	err := viper.ReadInConfig()
-	if err != nil {
-		return Config{
-			Env: env,
-		}, err
+	if err = viper.ReadInConfig(); err != nil {
+		return
 	}
-
-	config := Config{
-		Env: env,
+	if err = viper.Unmarshal(&c); err != nil {
+		return
 	}
-	err = viper.Unmarshal(&config)
-	if err != nil {
-		return Config{
-			Env: env,
-		}, err
-	}
-	return config, nil
+	return c, nil
 }
 
 func extractEnv() string {
@@ -56,4 +71,12 @@ func extractEnv() string {
 		env = constant.DefaultEnv
 	}
 	return env
+}
+
+func getAbsPath(dir string) (string, error) {
+	path, err := filepath.Abs(dir)
+	if err != nil {
+		panic(err)
+	}
+	return path, nil
 }

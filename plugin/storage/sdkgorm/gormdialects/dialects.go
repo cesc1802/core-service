@@ -11,25 +11,25 @@ import (
 	"strconv"
 )
 
-func MySqlDB(cfg *config.DatabaseConfig) (*gorm.DB, error) {
+func MySqlDB(cfg *config.SQLDBConfig) (*gorm.DB, error) {
 	dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=utf8mb4&parseTime=True&loc=Local",
 		cfg.Username, cfg.Password, cfg.Host, strconv.Itoa(cfg.Port), cfg.DBName)
 	return gorm.Open(mysql.Open(dsn), &gorm.Config{})
 }
 
-func PostgresDB(cfg *config.DatabaseConfig) (*gorm.DB, error) {
+func PostgresDB(cfg *config.SQLDBConfig) (*gorm.DB, error) {
 	dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=utf8mb4&parseTime=True&loc=Local",
 		cfg.Username, cfg.Password, cfg.Host, strconv.Itoa(cfg.Port), cfg.DBName)
 	return gorm.Open(postgres.Open(dsn), &gorm.Config{})
 }
 
-func MssqlDB(cfg *config.DatabaseConfig) (*gorm.DB, error) {
+func MssqlDB(cfg *config.SQLDBConfig) (*gorm.DB, error) {
 	dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=utf8mb4&parseTime=True&loc=Local",
 		cfg.Username, cfg.Password, cfg.Host, strconv.Itoa(cfg.Port), cfg.DBName)
 	return gorm.Open(sqlserver.Open(dsn), &gorm.Config{})
 }
 
-func SqliteDB(cfg *config.DatabaseConfig) (*gorm.DB, error) {
+func SqliteDB(cfg *config.SQLDBConfig) (*gorm.DB, error) {
 	dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=utf8mb4&parseTime=True&loc=Local",
 		cfg.Username, cfg.Password, cfg.Host, strconv.Itoa(cfg.Port), cfg.DBName)
 	return gorm.Open(sqlite.Open(dsn), &gorm.Config{})

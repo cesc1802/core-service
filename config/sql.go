@@ -1,6 +1,6 @@
 package config
 
-type DatabaseConfig struct {
+type SQLDBConfig struct {
 	Host            string `yaml:"host"`
 	Port            int    `yaml:"port"`
 	Username        string `yaml:"username"`
@@ -10,7 +10,6 @@ type DatabaseConfig struct {
 	MaxIdleConns    int    `yaml:"maxIdleConns"`
 	MaxOpenConns    int    `yaml:"maxOpenConns"`
 	ConnMaxLifetime string `yaml:"connMaxLifetime"`
-	//ConnTimeout     time.Duration `yaml:"connTimeout"`
-	//ReadTimeout     time.Duration `yaml:"readTimeout"`
-	//WriteTimeout    time.Duration `yaml:"writeTimeout"`
 }
+
+type SQLDBConfigs []SQLDBConfig
