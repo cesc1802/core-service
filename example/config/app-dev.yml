@@ -23,16 +23,12 @@ databases:
     maxOpenConns: 1000
     connMaxLifetime: 1h
 
-database:
-  host: localhost
-  port: 3306
-  username: portal
-  password: 4f242f2491e53c8e72f14c373f3dd19d
-  dbname: PORTAL
-  dbtype: mysql
-  maxIdleConns: 10
-  maxOpenConns: 1000
-  connMaxLifetime: 1h
+nosqldatabases:
+  - host: localhost
+    port: 27017
+    user: example
+    password: example
+    dbtype: mongo
 
 redis:
   host: localhost

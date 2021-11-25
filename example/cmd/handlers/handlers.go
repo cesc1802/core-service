@@ -6,6 +6,9 @@ import (
 	core_service "github.com/cesc1802/core-service"
 	"github.com/cesc1802/core-service/events"
 	"github.com/gin-gonic/gin"
+	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
+	mongo2 "go.mongodb.org/mongo-driver/mongo"
 	"log"
 	"net/http"
 )
@@ -32,6 +35,62 @@ func PublicHandler(app core_service.Service) func(e *gin.Engine) {
 				c.JSON(http.StatusOK, gin.H{
 					"data": true,
 				})
+			})
+		}
+
+		mongo := e.Group("mongo")
+		{
+			mongo.GET("", func(c *gin.Context) {
+				mgoDB := app.MustGet(common.KeyMgoDB).(*mongo2.Client)
+				type user struct {
+					ID    primitive.ObjectID `bson:"_id"`
+					Name  string             `bson:"name"`
+					Email string             `bson:"email"`
+					Age   int                `bson:"age"`
+				}
+
+				var u user
+
+				var users []user
+				userCollection := mgoDB.Database("example").Collection("users")
+
+				ctx := c.Request.Context()
+				insertRes, err := userCollection.Find(ctx, bson.M{})
+
+				for insertRes.Next(ctx) {
+					insertRes.Decode(&u)
+					users = append(users, u)
+				}
+
+				if err != nil {
+					c.JSON(http.StatusBadRequest, gin.H{"data": err.Error()})
+					return
+				}
+
+				c.JSON(http.StatusOK, gin.H{"data": users})
+			})
+			mongo.POST("", func(c *gin.Context) {
+				mgoDB := app.MustGet(common.KeyMgoDB).(*mongo2.Client)
+				type user struct {
+					Name  string
+					Email string
+					Age   int
+				}
+
+				var u = user{
+					Name:  "thuocnv",
+					Email: "thuocnv@gmail.com",
+					Age:   28,
+				}
+				userCollection := mgoDB.Database("example").Collection("users")
+				insertRes, err := userCollection.InsertOne(c.Request.Context(), u)
+
+				if err != nil {
+					c.JSON(http.StatusBadRequest, gin.H{"data": err.Error()})
+					return
+				}
+
+				c.JSON(http.StatusOK, gin.H{"data": insertRes})
 			})
 		}
 	}

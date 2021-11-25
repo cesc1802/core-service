@@ -11,6 +11,7 @@ import (
 	"github.com/cesc1802/core-service/logger"
 	"github.com/cesc1802/core-service/plugin/pubsub"
 	"github.com/cesc1802/core-service/plugin/storage/sdkgorm"
+	"github.com/cesc1802/core-service/plugin/storage/sdkmgo"
 	"github.com/spf13/cobra"
 	"log"
 )
@@ -28,6 +29,7 @@ var serverCmd = &cobra.Command{
 			WithHttpServer(httpserver.New(coreCfg, i18n, *baseLogger)),
 			WithInitRunnable(sdkgorm.NewGormDB(common.KeyPrimaryDB, common.KeyPrimaryDB, &coreCfg.SQLDBConfigs[0])),
 			WithInitRunnable(sdkgorm.NewGormDB(common.KeySecondaryDB, common.KeySecondaryDB, &coreCfg.SQLDBConfigs[1])),
+			WithInitRunnable(sdkmgo.NewMongoDB(common.KeyMgoDB, common.KeyMgoDB, &coreCfg.NoSQLConfigs[0])),
 			WithInitRunnable(pubsub.New(common.KeyPubSub, common.KeyPubSub)),
 		)
 

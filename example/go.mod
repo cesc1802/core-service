@@ -14,5 +14,6 @@ replace github.com/cesc1802/core-service v0.0.0 => ../../core-service
 
 require (
 	github.com/mattn/go-isatty v0.0.14 // indirect
+	go.mongodb.org/mongo-driver v1.7.4 // indirect
 	golang.org/x/sys v0.0.0-20211116061358-0a5406a5449c // indirect
 )
