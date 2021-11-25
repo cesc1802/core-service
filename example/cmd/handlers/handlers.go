@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"example/common"
 	"example/module/user_v1/transport/ginuser"
 	core_service "github.com/cesc1802/core-service"
 	"github.com/cesc1802/core-service/events"
@@ -20,7 +21,7 @@ func PublicHandler(app core_service.Service) func(e *gin.Engine) {
 		pubsub := e.Group("pubsub")
 		{
 			pubsub.GET("", func(c *gin.Context) {
-				ps := app.MustGet("pubsub").(events.Stream)
+				ps := app.MustGet(common.KeyPubSub).(events.Stream)
 
 				if err := ps.Publish("test", map[string]interface{}{
 					"email": "test@gmail.com",

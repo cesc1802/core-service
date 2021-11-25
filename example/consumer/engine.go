@@ -3,6 +3,7 @@ package consumer
 import (
 	"context"
 	"example/asyncjob"
+	"example/common"
 	core_service "github.com/cesc1802/core-service"
 	"github.com/cesc1802/core-service/events"
 	"log"
@@ -29,7 +30,7 @@ func (e *engine) Start() error {
 }
 
 func (e *engine) subscribe(topic string, isParallel bool, jobs ...consumerJob) error {
-	event, err := e.sc.MustGet("pubsub").(events.Stream).Consume(topic)
+	event, err := e.sc.MustGet(common.KeyPubSub).(events.Stream).Consume(topic)
 
 	for _, job := range jobs {
 		log.Println("Setup consumer job for:", job.Title)

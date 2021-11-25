@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"example/cmd/handlers"
+	"example/common"
 	"example/consumer"
 	"fmt"
 	"github.com/cesc1802/core-service/config"
@@ -25,9 +26,9 @@ var serverCmd = &cobra.Command{
 			WithName("demo"),
 			WithVersion("1.0.0"),
 			WithHttpServer(httpserver.New(coreCfg, i18n, *baseLogger)),
-			WithInitRunnable(sdkgorm.NewGormDB("portal", "portal", &coreCfg.SQLDBConfigs[0])),
-			WithInitRunnable(sdkgorm.NewGormDB("demo-portal", "demo-portal", &coreCfg.SQLDBConfigs[1])),
-			WithInitRunnable(pubsub.New("pubsub", "pubsub")),
+			WithInitRunnable(sdkgorm.NewGormDB(common.KeyPrimaryDB, common.KeyPrimaryDB, &coreCfg.SQLDBConfigs[0])),
+			WithInitRunnable(sdkgorm.NewGormDB(common.KeySecondaryDB, common.KeySecondaryDB, &coreCfg.SQLDBConfigs[1])),
+			WithInitRunnable(pubsub.New(common.KeyPubSub, common.KeyPubSub)),
 		)
 
 		consumer.NewEngine(app).Start()
